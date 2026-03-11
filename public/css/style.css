@@ -6,10 +6,10 @@ body {
   flex-direction: column;
   background: linear-gradient(
     160deg,
-    #916fda 0%,
-    #6746aa 35%,
-    #865ace 70%,
-    #746c7e 100%
+  #c084a0 0%,
+  #9b4f8e 35%,
+  #7e3f8f 65%,
+  #5c3275 100%
   );
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: #f0e8ff;
