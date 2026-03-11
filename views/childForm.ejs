@@ -1,0 +1,58 @@
+<%- include("partials/head.ejs") %>
+<%- include("partials/header.ejs") %>
+
+<div class="container mt-5" style="max-width:560px">
+  <h2 class="mb-4 text-center">
+    <%= isEdit ? '✏️ Edit Child' : '➕ Add Child' %>
+  </h2>
+
+  <form method="POST"
+        action="<%= isEdit ? '/profile/child/' + child._id : '/profile/child' %>">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+    <div class="mb-3">
+      <label for="name" class="form-label">Name *</label>
+      <input type="text" id="name" name="name" class="form-control"
+             value="<%= child ? child.name : '' %>" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="age" class="form-label">Age</label>
+      <input type="number" id="age" name="age" class="form-control"
+             min="1" max="18" value="<%= child && child.age ? child.age : '' %>">
+    </div>
+
+    <div class="mb-3">
+      <label for="doctor" class="form-label">Specialist</label>
+      <input type="text" id="doctor" name="doctor" class="form-control"
+             value="<%= child ? child.doctor : '' %>" placeholder="e.g. Dr. Smith">
+    </div>
+
+    <div class="mb-3">
+      <label for="school" class="form-label">Location</label>
+      <input type="text" id="school" name="school" class="form-control"
+             value="<%= child ? child.school : '' %>" placeholder="e.g. Lincoln Elementary">
+    </div>
+
+    <div class="mb-3">
+      <label for="sports" class="form-label">Class</label>
+      <input type="text" id="sports" name="sports" class="form-control"
+             value="<%= child ? child.sports : '' %>" placeholder="e.g. Football, Swimming">
+    </div>
+
+    <div class="mb-3">
+      <label for="notes" class="form-label">📝 Notes</label>
+      <textarea id="notes" name="notes" class="form-control" rows="3"
+                placeholder="Any additional info..."><%= child ? child.notes : '' %></textarea>
+    </div>
+
+    <div class="d-flex gap-2 justify-content-center mt-4">
+      <button type="submit" class="btn btn-primary px-4">
+        <%= isEdit ? '💾 Save Changes' : '➕ Add Child' %>
+      </button>
+      <a href="/profile" class="btn btn-secondary px-4">← Cancel</a>
+    </div>
+  </form>
+</div>
+
+<%- include("partials/footer.ejs") %>

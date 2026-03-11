@@ -1,0 +1,138 @@
+<%- include("partials/head.ejs") %>
+<%- include("partials/header.ejs") %>
+
+<div class="container mt-4 pb-4">
+
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="page-title">My Tasks</h2>
+    <a href="/tasks/new" class="btn btn-add">＋ New Task</a>
+  </div>
+
+
+  <% if (locals.success && locals.success.length > 0) { %>
+    <% locals.success.forEach(msg => { %>
+      <div class="alert alert-success alert-dismissible fade show">
+        <%= msg %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    <% }) %>
+  <% } %>
+  <% if (locals.errors && locals.errors.length > 0) { %>
+    <% locals.errors.forEach(err => { %>
+      <div class="alert alert-danger alert-dismissible fade show">
+        <%= err %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    <% }) %>
+  <% } %>
+
+  <%
+    const regularTasks = tasks.filter(t => !t.isPrivate);
+    const privateTasks = tasks.filter(t => t.isPrivate);
+  %>
+
+
+  <div class="section-card mb-4">
+    <div class="section-header regular-header">
+      <span>📋 Regular Tasks</span>
+      <span class="badge-count"><%= regularTasks.length %></span>
+    </div>
+
+    <% if (regularTasks.length === 0) { %>
+      <p class="empty-msg">No regular tasks yet.</p>
+    <% } %>
+
+    <% regularTasks.forEach(task => { %>
+      <div class="task-item task-regular">
+        <div class="task-info">
+          <div class="task-title"><%= task.title %></div>
+          <% if (task.description) { %>
+            <div class="task-desc"><%= task.description %></div>
+          <% } %>
+          <div class="task-meta">
+            <span class="badge-cat"><%= task.category %></span>
+            <span class="badge-status status-<%= task.status.replace(' ','-') %>">
+              <%= task.status %>
+            </span>
+            <% if (task.dueDate) { %>
+              <span class="due-date">📅 <%= task.dueDate.toISOString().split('T')[0] %></span>
+            <% } %>
+          </div>
+        </div>
+
+        <div class="task-actions">
+       
+          <button class="btn btn-share"
+            onclick="copyLink('<%= task._id %>')"
+            title="Copy shareable link">
+            🔗 Share
+          </button>
+          <a href="/tasks/edit/<%= task._id %>" class="btn btn-edit">Edit</a>
+          <form method="POST" action="/tasks/delete/<%= task._id %>"
+                onsubmit="return confirm('Delete this task?')" style="display:inline">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button type="submit" class="btn btn-del">Delete</button>
+          </form>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+
+  <div class="section-card">
+    <div class="section-header private-header">
+      <span>🔒 Private Tasks <small>(only you can see these)</small></span>
+      <span class="badge-count"><%= privateTasks.length %></span>
+    </div>
+
+    <% if (privateTasks.length === 0) { %>
+      <p class="empty-msg">No private tasks yet.</p>
+    <% } %>
+
+    <% privateTasks.forEach(task => { %>
+      <div class="task-item task-private">
+        <div class="task-info">
+          <div class="task-title">🔒 <%= task.title %></div>
+          <% if (task.description) { %>
+            <div class="task-desc"><%= task.description %></div>
+          <% } %>
+          <div class="task-meta">
+            <span class="badge-cat"><%= task.category %></span>
+            <span class="badge-status status-<%= task.status.replace(' ','-') %>">
+              <%= task.status %>
+            </span>
+            <% if (task.dueDate) { %>
+              <span class="due-date">📅 <%= task.dueDate.toISOString().split('T')[0] %></span>
+            <% } %>
+          </div>
+          <% if (task.sensitiveInfo) { %>
+            <div class="sensitive-note">🔐 <%= task.sensitiveInfo %></div>
+          <% } %>
+        </div>
+
+        <div class="task-actions">
+        
+          <a href="/tasks/edit/<%= task._id %>" class="btn btn-edit">Edit</a>
+          <form method="POST" action="/tasks/delete/<%= task._id %>"
+                onsubmit="return confirm('Delete this task?')" style="display:inline">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button type="submit" class="btn btn-del">Delete</button>
+          </form>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+</div>
+
+<script>
+function copyLink(taskId) {
+  const url = window.location.origin + "/tasks/view/" + taskId;
+  navigator.clipboard.writeText(url).then(() => {
+    alert("Link copied: " + url);
+  });
+}
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+<%- include("partials/footer.ejs") %>
+

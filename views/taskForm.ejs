@@ -1,0 +1,123 @@
+<%- include("partials/head.ejs") %>
+<%- include("partials/header.ejs") %>
+
+<div class="container mt-4 pb-4" style="max-width: 560px;">
+  <h2 class="page-title mb-4"><%= task ? " Edit Task" : " New Task" %></h2>
+
+  <% if (locals.errors && locals.errors.length > 0) { %>
+    <% locals.errors.forEach(err => { %>
+      <div class="alert alert-danger"><%= err %></div>
+    <% }) %>
+  <% } %>
+
+  <div class="section-card p-4">
+    <form method="POST" action="<%= task ? '/tasks/update/' + task._id : '/tasks' %>">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+     
+   
+<div class="mb-4">
+  <label class="form-label fw-bold">Task Type</label>
+  <div class="d-flex gap-3">
+
+    <input
+      type="radio"
+      class="btn-check"
+      name="isPrivate"
+      id="typeRegular"
+      value="false"
+      <%= (!isPrivate && (!task || !task.isPrivate)) ? 'checked' : '' %>
+    >
+    <label class="btn btn-type" for="typeRegular">
+      📋 Regular
+    </label>
+
+    <input
+      type="radio"
+      class="btn-check"
+      name="isPrivate"
+      id="typePrivate"
+      value="true"
+      <%= (isPrivate || (task && task.isPrivate)) ? 'checked' : '' %>
+    >
+    <label class="btn btn-type" for="typePrivate">
+      🔒 Private
+    </label>
+
+  </div>
+</div>
+
+
+      <div class="mb-3">
+        <label class="form-label">Name <span class="text-danger"></span></label>
+        <input type="text" name="title" class="form-control"
+               value="<%= task ? task.title : '' %>" required>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Note</label>
+        <textarea name="description" class="form-control" rows="3"><%= task ? task.description : '' %></textarea>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col">
+          <label class="form-label">Category</label>
+          <select name="category" class="form-control">
+            <option value="doctor"   <%= task && task.category==='doctor'   ? 'selected':'' %>>Specialist</option>
+            <option value="club"     <%= task && task.category==='club'     ? 'selected':'' %>>Club</option>
+            <option value="sport"    <%= task && task.category==='sport'    ? 'selected':'' %>>Class</option>
+            <option value="homework" <%= task && task.category==='homework' ? 'selected':'' %>>Homework</option>
+            <option value="other"    <%= task && task.category==='other'    ? 'selected':'' %>>Other</option>
+          </select>
+        </div>
+        <div class="col">
+          <label class="form-label">Status</label>
+          <select name="status" class="form-control">
+            <option value="todo"        <%= task && task.status==='todo'        ? 'selected':'' %>>📝 Todo</option>
+            <option value="in progress" <%= task && task.status==='in progress' ? 'selected':'' %>>⚙️ In Progress</option>
+            <option value="done"        <%= task && task.status==='done'        ? 'selected':'' %>>✅ Done</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="mb-3" id="sensitiveBlock" style="display:none;">
+        <label class="form-label">🔐 Sensitive Info</label>
+        <input type="text" name="sensitiveInfo" class="form-control"
+               value="<%= task ? task.sensitiveInfo : '' %>"
+               placeholder="Private notes...">
+      </div>
+
+  
+      <div class="mb-4">
+        <label class="form-label">📅 Due Date</label>
+        <input type="date" name="dueDate" class="form-control"
+               value="<%= task && task.dueDate ? task.dueDate.toISOString().split('T')[0] : '' %>">
+      </div>
+
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-add flex-grow-1">
+          <%= task ? " Save Changes" : " Add Task" %>
+        </button>
+        <a href="/tasks" class="btn btn-cancel">Cancel</a>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<script>
+
+  const radios = document.querySelectorAll('input[name="isPrivate"]');
+  const block  = document.getElementById('sensitiveBlock');
+
+  function toggleSensitive() {
+    const isPrivate = document.getElementById('typePrivate').checked;
+    block.style.display = isPrivate ? 'block' : 'none';
+  }
+
+  radios.forEach(r => r.addEventListener('change', toggleSensitive));
+  toggleSensitive(); 
+</script>
+
+<%- include("partials/footer.ejs") %>
+

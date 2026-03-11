@@ -1,0 +1,22 @@
+<%- include("partials/head.ejs") %>
+<%- include("partials/header.ejs") %>
+
+<div class="hero-section">
+  <h1 class="hero-title">Navi Kids</h1>
+  <p class="hero-subtitle">Track your kid's tasks, keep your info safe</p>
+
+  <% if (user) { %>
+    <p class="hero-welcome">Welcome back, <strong><%= user.name %></strong> 👋</p>
+    <div class="hero-buttons">
+      <a href="/tasks"     class="btn-hero-primary">📋 My Tasks</a>
+      <a href="/tasks/new" class="btn-hero-secondary">➕ New Task</a>
+    </div>
+  <% } else { %>
+    <div class="hero-buttons">
+      <a href="/sessions/logon"    class="btn-hero-primary">Login</a>
+      <a href="/sessions/register" class="btn-hero-secondary">Register</a>
+    </div>
+  <% } %>
+</div>
+
+<%- include("partials/footer.ejs") %>

@@ -1,0 +1,98 @@
+<%- include("partials/head.ejs") %>
+<%- include("partials/header.ejs") %>
+
+<div class="profile-page">
+
+
+  <div class="profile-hero">
+    <div class="profile-avatar"><%= userData.name.charAt(0).toUpperCase() %></div>
+    <h1 class="profile-name"><%= userData.name %></h1>
+    <p class="profile-email">✉️ <%= userData.email %></p>
+    <a href="/profile/edit" class="btn-edit-profile"> Edit Info</a>
+  </div>
+
+ 
+  <div class="children-section">
+    <div class="section-header">
+      <h2 class="section-title">👨‍👩‍👧‍👦 My Children</h2>
+      <a href="/profile/child/new" class="btn-add-child">+ Add Child</a>
+    </div>
+
+    <% if (children.length === 0) { %>
+      <div class="empty-children">
+        <p>No children added yet.</p>
+        <a href="/profile/child/new" class="btn-add-child">+ Add your first child</a>
+      </div>
+    <% } else { %>
+      <div class="children-grid">
+        <% children.forEach(function(child) { %>
+          <div class="child-card">
+
+            <div class="child-card-header">
+              <div class="child-avatar"><%= child.name.charAt(0).toUpperCase() %></div>
+              <div>
+                <h3 class="child-name"><%= child.name %></h3>
+                <% if (child.age) { %><span class="child-age"><%= child.age %> years old</span><% } %>
+              </div>
+            </div>
+
+            <div class="child-info-list">
+              <% if (child.doctor) { %>
+                <div class="child-info-row">
+                  <span class="ci-icon">👩‍⚕️</span>
+                  <span class="ci-label">Doctor</span>
+                  <span class="ci-value"><%= child.doctor %></span>
+                </div>
+              <% } %>
+              <% if (child.school) { %>
+                <div class="child-info-row">
+                  <span class="ci-icon">🏫</span>
+                  <span class="ci-label">School</span>
+                  <span class="ci-value"><%= child.school %></span>
+                </div>
+              <% } %>
+              <% if (child.contacts) { %>
+                <div class="child-info-row">
+                  <span class="ci-icon">📞</span>
+                  <span class="ci-label">Contacts</span>
+                  <span class="ci-value"><%= child.contacts %></span>
+                </div>
+              <% } %>
+              <% if (child.sports) { %>
+                <div class="child-info-row">
+                  <span class="ci-icon">⚽</span>
+                  <span class="ci-label">Sports</span>
+                  <span class="ci-value"><%= child.sports %></span>
+                </div>
+              <% } %>
+              <% if (child.notes) { %>
+                <div class="child-info-row">
+                  <span class="ci-icon">📝</span>
+                  <span class="ci-label">Notes</span>
+                  <span class="ci-value"><%= child.notes %></span>
+                </div>
+              <% } %>
+            </div>
+
+            <div class="child-card-actions">
+              <a href="/profile/child/<%= child._id %>/edit" class="btn-child-edit">Edit</a>
+              <form method="POST" action="/profile/child/<%= child._id %>/delete"
+                    style="display:inline"
+                    onsubmit="return confirm('Remove <%= child.name %>?')">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button type="submit" class="btn-child-delete"> Delete</button>
+              </form>
+            </div>
+
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+  </div>
+
+  <div class="profile-actions">
+    <a href="/tasks" class="btn-back">← Back to Tasks</a>
+  </div>
+</div>
+
+<%- include("partials/footer.ejs") %>
