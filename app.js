@@ -46,6 +46,11 @@ const store = new MongoDBStore({
   collection: "mySessions",
 });
 
+let mongoURL = process.env.MONGO_URI;
+if (process.env.NODE_ENV == "test") {
+  mongoURL = process.env.MONGO_URI_TEST;
+}
+
 
 app.use(
   session({
@@ -85,8 +90,18 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 
 
+
 app.get("/", (req, res) => {
   res.render("index", { title: "Home" });
+});
+
+app.use((req, res, next) => {
+  if (req.path == "/multiply") {
+    res.set("Content-Type", "application/json");
+  } else {
+    res.set("Content-Type", "text/html");
+  }
+  next();
 });
 
 app.use("/sessions", sessionRoutes);
@@ -94,6 +109,10 @@ app.use("/tasks", taskRoutes);
 app.use("/sensitive", auth, sensitiveRouter);
 app.use("/profile", auth, profileRouter);
 
+app.get("/multiply", (req, res) => {
+  const result = req.query.first * req.query.second;
+  res.json({ result: result });
+});
 
 
 app.use((req, res) => {
@@ -107,5 +126,19 @@ app.use((err, req, res, next) => {
   res.status(500).redirect("/");
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+const port = process.env.PORT || 3000;
+const start = () => {
+  try {
+    require("./db/connect")(mongoURL);
+    return app.listen(port, () =>
+      console.log(`Server is listening on port ${port}...`)
+    );
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+if (require.main === module) {
+  start(); 
+}
+module.exports = { app };

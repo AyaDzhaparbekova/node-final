@@ -4,6 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node app.js",
+    "test": "NODE_ENV=test mocha tests/*.js --timeout 5000 --exit",
     "dev": "nodemon app.js"
   },
   "keywords": [],
@@ -30,7 +31,13 @@
     "xss-clean": "^0.1.4"
   },
   "devDependencies": {
-    "nodemon": "^3.1.14"
+    "@faker-js/faker": "^10.3.0",
+    "chai": "^5.3.3",
+    "chai-http": "^5.1.2",
+    "esm": "^3.2.25",
+    "mocha": "^11.7.5",
+    "nodemon": "^3.1.14",
+    "puppeteer": "^24.39.1"
   },
   "description": "project",
   "repository": {
